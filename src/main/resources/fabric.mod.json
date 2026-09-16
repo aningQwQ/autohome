@@ -4,7 +4,7 @@
   "version": "${version}",
   "name": "Auto Home",
   "description": "Automatically teleports you home when health drops below a threshold.",
-  "authors": [],
+  "authors": ["徐英珺"],
   "contact": {},
   "license": "MIT",
   "icon": "assets/autohome/icon.png",
