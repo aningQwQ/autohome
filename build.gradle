@@ -1,0 +1,77 @@
+plugins {
+    id 'fabric-loom' version "${loom_version}"
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+repositories {
+    maven {
+        name = 'TerraformersMC'
+        url = 'https://maven.terraformersmc.com/releases/'
+    }
+    maven {
+        name = 'Cloth Config'
+        url = 'https://maven.shedaniel.me/'
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+
+    // Minecraft 26.2 is published unobfuscated, so there is no mapping set to
+    // download. Loom still requires a mappings dependency; this identity
+    // mapping declares the official -> named namespaces with no entries.
+    mappings loom.layered { mappings(file('identity.tiny')) }
+
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
+    modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+
+}
+
+loom {
+    // 26.2 has no intermediary mappings; construct the game jar directly.
+    noIntermediateMappings()
+}
+
+processResources {
+    inputs.property "version", project.version
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 25
+}
+
+// Maven Central is unreachable from this machine, so the state machine checks
+// are plain Java with no test framework dependency.
+tasks.named('test') {
+    enabled = false
+}
+
+tasks.register('stateMachineTest', JavaExec) {
+    group = 'verification'
+    description = 'Runs the dependency-free state machine checks'
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.example.autohome.handler.CooldownDecisionTest'
+}
+
+tasks.named('check') {
+    dependsOn 'stateMachineTest'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}

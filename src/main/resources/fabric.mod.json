@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "autohome",
+  "version": "${version}",
+  "name": "Auto Home",
+  "description": "Automatically teleports you home when health drops below a threshold.",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/autohome/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.example.autohome.AutoHomeMod"
+    ],
+    "modmenu": [
+      "com.example.autohome.client.AutoHomeModClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "~26.2",
+    "java": ">=25",
+    "fabric-api": "*",
+    "cloth-config": ">=26.2.155"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
+}
